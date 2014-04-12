@@ -32,3 +32,19 @@ void clua_setexecutionlimit(lua_State* L, int n);
 int clua_isgofunction(lua_State *L, int n);
 int clua_isgostruct(lua_State *L, int n);
 
+
+
+// Added by dongaihua, jackiedong168@gmail.com
+void dump_element(lua_State* L, int idx, int depth);
+void dump_element_recurse(lua_State* L, int idx, int depth);
+void dump_stack(lua_State* L);
+void dump_var(lua_State* L, const char* var);
+void dump_var_recurse(lua_State* L, const char* var);
+
+
+
+
+
+
+
+
