@@ -3,9 +3,10 @@ package main
 import (
 	"../lua"
 	"fmt"
-	"testing"
+	"runtime"
 	//"github.com/dongaihua/golua/lua"
 	//"runtime"
+	"time"
 )
 
 // func adder(L *lua.State) int {
@@ -20,6 +21,36 @@ func p(p interface{}) {
 
 }
 
+var x = 0
+var canExit = false
+
+func inc_x() { //test
+	for {
+		x += 1
+	}
+}
+
+func print() {
+	for {
+		x = x + 1
+		fmt.Println(x)
+	}
+}
+
+func print1(p interface{}, times int) {
+	for i := 0; i < times; i++ {
+		fmt.Printf("%v, %v\n", i, p)
+		//runtime.Gosched()
+	}
+}
+
+func print2(p interface{}, times int) {
+	for i := 0; i < times; i++ {
+		fmt.Printf("%v, %v\n", i, p)
+		//runtime.Gosched()
+	}
+	canExit = true
+}
 func readConfig(L *lua.State) {
 	// L.GetGlobal("width")
 	// width := L.ToNumber(-1)
@@ -115,7 +146,9 @@ func basicTest(L *lua.State) {
 
 }
 
-func main() {
+var count = 1
+
+func execTest(number int) {
 	L := lua.NewState()
 	defer L.Close()
 	L.OpenLibs()
@@ -126,28 +159,45 @@ func main() {
 		return
 	}
 
-	// L.Exec("print", "Hello World!")
-	// result, err := L.Exec("calculate", 1.1, 2)
-	// result, err := L.Exec("calculate",  1.1, 2.2)
-	// result, err := L.Exec("calucuate", 1, 2)
+	L.Exec("print", 0, number)
+	i, err := L.Exec("calculate", 1, 2, 3)
+	if err != nil {
+		p(err)
+		return
+	}
+	p(i)
+	count--
 
-	//readConfig(L)
-	exec(L)
 }
 
-func BenchmarkExec(b *testing.B) {
-	L := lua.NewState()
-	defer L.Close()
-	L.OpenLibs()
+func main() {
+	runtime.GOMAXPROCS(100)
+	// execTest(1)
+	// execTest(2)
+	// execTest(3)
+	// execTest(4)
+	// execTest(5)
+	// execTest(6)
 
-	err := L.DoFile("test.lua")
-	if err != nil {
-		p(err)
-		return
+	go execTest(1)
+	// go execTest(2)
+	// go execTest(3)
+	// go execTest(4)
+	// go execTest(5)
+	// go execTest(6)
+	// go execTest(7)
+	// go execTest(8)
+	// go execTest(9)
+	// go execTest(10)
+	// go execTest(11)
+	// go execTest(12)
+	// go execTest(13)
+	// go execTest(14)
+	// go execTest(15)
+	for count > 0 {
+		fmt.Printf("count:%v\n", count)
+		time.Sleep(3000 * time.Millisecond)
+
 	}
 
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		L.Exec("calculate", 1, 2, 3)
-	}
 }
